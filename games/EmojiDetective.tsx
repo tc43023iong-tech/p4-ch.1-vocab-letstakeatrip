@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { WORDS, WordItem, POKEMON_SPRITE_URL } from '../types';
+import { WORDS, WordItem, DoodlePikachu } from '../types';
 
 const EmojiDetective: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -26,7 +25,7 @@ const EmojiDetective: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         if (currentIdx < WORDS.length - 1) {
           setCurrentIdx(prev => prev + 1);
         } else {
-          alert("Excellent! You found them all! 🎉");
+          alert("Excellent job! 🌟👏");
           onBack();
         }
       }, 1000);
@@ -37,32 +36,35 @@ const EmojiDetective: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   };
 
   return (
-    <div className="w-full text-center">
-      <button onClick={onBack} className="absolute left-4 top-4 bg-slate-200 p-2 rounded-full px-4 font-bold">⬅️ Back</button>
+    <div className="w-full text-center relative max-w-4xl">
+      <button onClick={onBack} className="absolute left-0 top-0 sketch-button px-6 py-2 font-bold z-20">⬅️ Back</button>
       
-      <div className="mt-12">
-        <img src={`${POKEMON_SPRITE_URL}25.png`} className="w-32 h-32 mx-auto pokemon-float" alt="Pikachu Detective" />
-        <h2 className="text-4xl text-yellow-600 mb-2">Emoji Detective 🔍</h2>
-        <div className="bg-white p-12 rounded-[50px] shadow-xl inline-block border-4 border-yellow-400 mb-8 relative">
-           <div className="text-8xl mb-4">{currentWord.emoji}</div>
-           <p className="text-2xl text-slate-500 font-bold">{currentWord.chinese}</p>
-           {feedback === 'correct' && <div className="absolute inset-0 flex items-center justify-center text-7xl bg-white/80 rounded-[50px]">✅</div>}
-           {feedback === 'wrong' && <div className="absolute inset-0 flex items-center justify-center text-7xl bg-white/80 rounded-[50px]">❌</div>}
+      <div className="mt-16 flex flex-col items-center">
+        <DoodlePikachu size={140} />
+        <h2 className="text-6xl text-blue-600 mb-8 mt-4 font-bold">Emoji Detective 🔍</h2>
+        
+        <div className="sketch-border p-12 mb-12 relative w-full max-w-lg bg-white/50">
+           <div className="text-[12rem] leading-none mb-8">{currentWord.emoji}</div>
+           <p className="text-5xl text-blue-500 font-bold border-t-2 border-dashed border-slate-300 pt-6">{currentWord.chinese}</p>
+           {feedback === 'correct' && <div className="absolute inset-0 flex items-center justify-center text-[10rem] animate-bounce z-10">✅</div>}
+           {feedback === 'wrong' && <div className="absolute inset-0 flex items-center justify-center text-[10rem] z-10">❌</div>}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl px-4">
           {options.map((opt, i) => (
             <button
               key={i}
               onClick={() => handleSelect(opt)}
-              className="bg-sky-100 hover:bg-sky-200 p-6 rounded-2xl text-2xl font-bold text-sky-800 border-b-4 border-sky-300 transition-all"
+              className="sketch-button p-10 text-4xl font-bold text-slate-700 hover:bg-yellow-50"
             >
               {opt.english}
             </button>
           ))}
         </div>
         
-        <div className="mt-8 text-slate-400 font-bold">Progress: {currentIdx + 1} / {WORDS.length}</div>
+        <div className="mt-16 text-slate-400 font-bold text-3xl border-b-2 border-slate-200 inline-block px-10">
+          Clue {currentIdx + 1} of {WORDS.length}
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { WORDS, WordItem, POKEMON_SPRITE_URL } from '../types';
+import { WORDS, WordItem, CHARACTER_IMAGES } from '../types';
 
 const MatchingGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [sets, setSets] = useState<{ english: string[], chinese: string[] }[]>([]);
@@ -46,7 +45,7 @@ const MatchingGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         }, 1000);
       } else {
         setTimeout(() => {
-          alert("Matching Master! 🏆");
+          alert("Nobita says: We did it! You are a genius! 🎓✨");
           onBack();
         }, 500);
       }
@@ -58,38 +57,40 @@ const MatchingGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const currentSet = sets[currentSetIdx];
 
   return (
-    <div className="w-full text-center">
-      <button onClick={onBack} className="absolute left-4 top-4 bg-slate-200 p-2 rounded-full px-4 font-bold">⬅️ Back</button>
+    <div className="w-full text-center relative">
+      <button onClick={onBack} className="absolute left-0 top-0 sketch-button px-6 py-2 font-bold z-20">⬅️ Back</button>
       
-      <div className="mt-8 flex flex-col items-center">
-        <img src={`${POKEMON_SPRITE_URL}4.png`} className="w-24 h-24 pokemon-float" alt="Charmander" />
-        <h2 className="text-4xl text-orange-500 mb-6">Match the Pairs 🔗</h2>
+      <div className="mt-12 flex flex-col items-center">
+        <img src={CHARACTER_IMAGES.NOBITA} className="w-28 h-36 object-contain animate-float" alt="Nobita" />
+        <h2 className="text-5xl text-blue-500 mb-10 mt-4 font-bold">Word Match 🔗</h2>
         
-        <div className="flex gap-12 w-full max-w-2xl justify-center mb-8">
-          <div className="flex flex-col gap-4 w-1/2">
+        <div className="flex flex-col md:flex-row gap-12 w-full max-w-5xl justify-center mb-10 px-6">
+          <div className="flex flex-col gap-5 w-full md:w-1/2">
+            <h3 className="text-3xl font-bold text-slate-500 mb-4 bg-blue-50 sketch-border py-2 px-6">English</h3>
             {currentSet.english.map(eng => (
               <button
                 key={eng}
                 disabled={matches.includes(eng)}
                 onClick={() => setSelectedEng(eng)}
-                className={`p-4 rounded-xl text-xl font-bold border-2 transition-all ${
-                  matches.includes(eng) ? 'bg-green-100 border-green-300 text-green-600 opacity-50' :
-                  selectedEng === eng ? 'bg-orange-400 border-orange-600 text-white scale-105' : 'bg-white border-slate-200'
+                className={`p-6 text-3xl font-bold sketch-button transition-all ${
+                  matches.includes(eng) ? 'bg-green-100 text-green-700 border-green-300 line-through opacity-50' :
+                  selectedEng === eng ? 'bg-yellow-200 border-orange-400 -rotate-2 scale-105' : 'bg-white hover:bg-slate-50'
                 }`}
               >
                 {eng}
               </button>
             ))}
           </div>
-          <div className="flex flex-col gap-4 w-1/2">
+          <div className="flex flex-col gap-5 w-full md:w-1/2">
+            <h3 className="text-3xl font-bold text-slate-500 mb-4 bg-green-50 sketch-border py-2 px-6">Chinese</h3>
             {currentSet.chinese.map(chi => (
               <button
                 key={chi}
                 disabled={matches.some(eng => WORDS.find(w => w.english === eng)?.chinese === chi)}
                 onClick={() => setSelectedChi(chi)}
-                className={`p-4 rounded-xl text-xl font-bold border-2 transition-all ${
-                  matches.some(eng => WORDS.find(w => w.english === eng)?.chinese === chi) ? 'bg-green-100 border-green-300 text-green-600 opacity-50' :
-                  selectedChi === chi ? 'bg-orange-400 border-orange-600 text-white scale-105' : 'bg-white border-slate-200'
+                className={`p-6 text-3xl font-bold sketch-button transition-all ${
+                  matches.some(eng => WORDS.find(w => w.english === eng)?.chinese === chi) ? 'bg-green-100 text-green-700 border-green-300 line-through opacity-50' :
+                  selectedChi === chi ? 'bg-yellow-200 border-orange-400 rotate-2 scale-105' : 'bg-white hover:bg-slate-50'
                 }`}
               >
                 {chi}
@@ -98,7 +99,9 @@ const MatchingGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           </div>
         </div>
         
-        <div className="text-slate-400 font-bold">Set {currentSetIdx + 1} of {sets.length}</div>
+        <div className="sketch-border px-10 py-3 bg-white text-slate-400 font-bold text-2xl mb-10">
+          Page {currentSetIdx + 1} / {sets.length}
+        </div>
       </div>
     </div>
   );

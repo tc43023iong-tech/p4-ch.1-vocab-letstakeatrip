@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { WORDS, WordItem, POKEMON_SPRITE_URL } from '../types';
+import { WORDS, WordItem, DoodleDora, DoodleFriend } from '../types';
 
 const PokemonBattle: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [playerHp, setPlayerHp] = useState(100);
@@ -21,24 +20,22 @@ const PokemonBattle: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     setIsAttacking(true);
     
     if (opt.id === currentWord.id) {
-      // Correct! Player attacks
       setEnemyHp(prev => Math.max(0, prev - 25));
       setTimeout(() => {
         setIsAttacking(false);
         if (enemyHp <= 25) {
-          alert("Victory! You defeated the enemy! 🏆🔥");
+          alert("Victory! You are a master! 🏆🌟");
           onBack();
         } else {
           setCurrentIdx(prev => (prev + 1) % WORDS.length);
         }
       }, 1000);
     } else {
-      // Wrong! Enemy attacks
       setPlayerHp(prev => Math.max(0, prev - 20));
       setTimeout(() => {
         setIsAttacking(false);
         if (playerHp <= 20) {
-          alert("Oh no! Try again! 💫");
+          alert("Oh no! Practice more! 🖍️");
           setPlayerHp(100);
           setEnemyHp(100);
           setCurrentIdx(0);
@@ -50,44 +47,46 @@ const PokemonBattle: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   };
 
   const getHpColor = (hp: number) => {
-    if (hp > 60) return 'bg-green-500';
-    if (hp > 30) return 'bg-yellow-500';
-    return 'bg-red-500';
+    if (hp > 60) return '#caffbf'; // Green
+    if (hp > 30) return '#fff4ad'; // Yellow
+    return '#ffadad'; // Red
   };
 
   return (
-    <div className="w-full text-center p-4">
-      <button onClick={onBack} className="absolute left-4 top-4 bg-slate-200 p-2 rounded-full px-4 font-bold">⬅️ Back</button>
+    <div className="w-full text-center relative max-w-4xl">
+      <button onClick={onBack} className="absolute left-0 top-0 sketch-button px-6 py-2 font-bold z-20">⬅️ Back</button>
       
-      <div className="flex justify-between items-center mb-12 mt-12 px-8">
-        <div className="w-1/3">
-           <img src={`${POKEMON_SPRITE_URL}6.png`} className={`w-32 h-32 mx-auto ${isAttacking ? 'animate-bounce' : ''}`} alt="Player Charizard" />
-           <div className="mt-2 text-xl font-bold text-slate-700">You (Charizard)</div>
-           <div className="w-full bg-slate-200 h-6 rounded-full mt-2 border-2 border-slate-300 overflow-hidden">
-             <div className={`h-full transition-all duration-500 ${getHpColor(playerHp)}`} style={{ width: `${playerHp}%` }}></div>
+      <div className="mt-12 flex justify-between items-end px-10 mb-16 h-60">
+        <div className={`flex flex-col items-center transition-all ${isAttacking ? 'animate-wiggle' : ''}`}>
+           <DoodleDora size={150} />
+           <div className="mt-4 w-48 sketch-border h-6 overflow-hidden bg-white">
+             <div className="h-full transition-all duration-500" style={{ width: `${playerHp}%`, backgroundColor: getHpColor(playerHp) }}></div>
            </div>
+           <p className="font-bold text-xl mt-2">Dora (You)</p>
         </div>
-        <div className="text-4xl font-bold text-red-500 animate-pulse">VS</div>
-        <div className="w-1/3">
-           <img src={`${POKEMON_SPRITE_URL}150.png`} className="w-32 h-32 mx-auto" alt="Enemy Mewtwo" />
-           <div className="mt-2 text-xl font-bold text-slate-700">Mewtwo</div>
-           <div className="w-full bg-slate-200 h-6 rounded-full mt-2 border-2 border-slate-300 overflow-hidden">
-             <div className={`h-full transition-all duration-500 ${getHpColor(enemyHp)}`} style={{ width: `${enemyHp}%` }}></div>
+
+        <div className="text-6xl font-bold text-red-400 mb-10 animate-bounce">VS</div>
+
+        <div className="flex flex-col items-center">
+           <DoodleFriend color="#555" size={120} />
+           <div className="mt-4 w-48 sketch-border h-6 overflow-hidden bg-white">
+             <div className="h-full transition-all duration-500" style={{ width: `${enemyHp}%`, backgroundColor: getHpColor(enemyHp) }}></div>
            </div>
+           <p className="font-bold text-xl mt-2">Giant Doodle</p>
         </div>
       </div>
 
-      <div className="bg-white p-8 rounded-3xl shadow-xl border-4 border-slate-100 max-w-2xl mx-auto">
-        <h3 className="text-2xl font-bold mb-6 text-slate-800">
-          Sentence: "{currentWord.sentence.replace('___', '______')}"
+      <div className="sketch-border p-12 bg-white/80 w-full mb-10">
+        <h3 className="text-4xl font-bold mb-8 text-slate-700">
+          "{currentWord.sentence.replace('___', '______')}"
         </h3>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {options.map(opt => (
             <button
               key={opt.id}
               disabled={isAttacking}
               onClick={() => handleAttack(opt)}
-              className="bg-slate-700 hover:bg-slate-800 text-white p-6 rounded-2xl text-xl font-bold shadow-lg disabled:opacity-50 transition-all"
+              className="sketch-button p-6 text-3xl font-bold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
             >
               {opt.english}
             </button>

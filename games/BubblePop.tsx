@@ -1,13 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
-import { WORDS, WordItem, POKEMON_SPRITE_URL } from '../types';
-
-const POKEMON_LIST = [1, 4, 7, 25, 39, 131, 133, 143, 151, 150, 52, 10];
+import { WORDS, WordItem, POKEMON_DOODLES } from '../types';
 
 const BubblePop: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [options, setOptions] = useState<WordItem[]>([]);
-  const [collected, setCollected] = useState<number[]>([]);
+  const [collected, setCollected] = useState<number[]>([]); // Storing indices of POKEMON_DOODLES
   const [popFeedback, setPopFeedback] = useState<number | null>(null);
 
   const currentWord = WORDS[currentIdx];
@@ -23,14 +20,18 @@ const BubblePop: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   };
 
   const handlePop = (opt: WordItem) => {
+    if (popFeedback !== null) return;
     if (opt.id === currentWord.id) {
       setPopFeedback(opt.id);
-      setCollected(prev => [...prev, POKEMON_LIST[currentIdx % POKEMON_LIST.length]]);
+      // Add a reward index that hasn't been added yet or just cycle
+      const nextPokeIndex = collected.length % POKEMON_DOODLES.length;
+      setCollected(prev => [...prev, nextPokeIndex]);
+      
       setTimeout(() => {
         if (currentIdx < WORDS.length - 1) {
           setCurrentIdx(prev => prev + 1);
         } else {
-          alert("All bubbles popped! You rescued the Pokémon! 🫧🐚");
+          alert("Victory! You collected all the Pokemon! 🫧✨");
           onBack();
         }
       }, 1000);
@@ -41,28 +42,30 @@ const BubblePop: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   };
 
   return (
-    <div className="w-full min-h-[80vh] flex flex-col items-center justify-between text-center bg-blue-50/50 rounded-[60px] p-8 border-4 border-blue-200 relative overflow-hidden">
-      {/* Background decorations */}
-      <div className="absolute top-10 left-10 text-4xl opacity-50 bubble-animation">🐟</div>
-      <div className="absolute bottom-40 right-10 text-4xl opacity-50 bubble-animation">🐙</div>
-      <div className="absolute bottom-20 left-20 text-4xl opacity-50 bubble-animation">🐠</div>
+    <div className="w-full min-h-[85vh] flex flex-col items-center justify-between text-center bg-blue-50/70 rounded-[80px] p-10 border-8 border-blue-200 shadow-2xl relative overflow-hidden">
+      {/* Ocean Elements */}
+      <div className="absolute top-10 left-10 text-6xl opacity-30 animate-float">🐚</div>
+      <div className="absolute top-40 right-20 text-6xl opacity-30 animate-float" style={{animationDelay: '1s'}}>🦪</div>
+      <div className="absolute bottom-60 left-20 text-6xl opacity-30 animate-float" style={{animationDelay: '2s'}}>🐠</div>
 
-      <button onClick={onBack} className="absolute left-4 top-4 bg-white/80 p-2 rounded-full px-4 font-bold z-10">⬅️ Back</button>
+      <button onClick={onBack} className="absolute left-6 top-6 sketch-button px-6 py-2 font-bold z-20">⬅️ Back</button>
       
       <div className="z-10 mt-4">
-        <img src={`${POKEMON_SPRITE_URL}131.png`} className="w-24 h-24 mx-auto pokemon-float" alt="Lapras" />
-        <h2 className="text-4xl text-blue-600 mb-2">Bubble Pop 🫧</h2>
-        <p className="text-5xl font-bold text-blue-900 my-8">"{currentWord.chinese}"</p>
+        <h2 className="text-5xl text-blue-600 mb-6 font-bold drop-shadow-sm">Ocean Bubble Pop 🐚🫧</h2>
+        <div className="bg-white/90 p-10 rounded-[40px] shadow-lg border-2 border-blue-100 mb-6 inline-block sketch-border">
+            <p className="text-5xl font-bold text-blue-900 leading-tight">"{currentWord.chinese}"</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-3 grid-rows-2 gap-8 mb-12 relative z-10">
+      {/* 2 Rows, 3 Columns Grid - Fixed positions as requested */}
+      <div className="grid grid-cols-3 grid-rows-2 gap-10 mb-10 relative z-10 w-full max-w-4xl mx-auto px-10">
         {options.map((opt, i) => (
           <button
             key={i}
             onClick={() => handlePop(opt)}
-            className={`w-32 h-32 rounded-full border-4 flex items-center justify-center p-2 text-xl font-bold transition-all shadow-inner bubble-animation ${
+            className={`w-40 h-40 rounded-full border-4 flex items-center justify-center p-6 text-2xl font-bold transition-all shadow-inner sketch-button ${
               popFeedback === opt.id && opt.id === currentWord.id ? 'bg-green-400 border-green-600 scale-0' :
-              popFeedback === -1 ? 'bg-red-100 border-red-300' : 'bg-white/60 border-blue-200 hover:bg-white/90'
+              popFeedback === -1 ? 'bg-red-100 border-red-300' : 'bg-white/95 border-blue-200 hover:bg-blue-100 hover:scale-105 active:scale-95 text-blue-800'
             }`}
           >
             {opt.english}
@@ -70,12 +73,22 @@ const BubblePop: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         ))}
       </div>
 
-      <div className="w-full max-w-2xl bg-orange-100/80 p-4 rounded-3xl border-b-8 border-orange-200 flex flex-wrap justify-center gap-4 min-h-[100px] z-10">
-        <span className="w-full text-orange-700 font-bold mb-2">🐚 Rescued Pokémon Shelf 🐚</span>
-        {collected.map((pokeId, i) => (
-          <img key={i} src={`${POKEMON_SPRITE_URL}${pokeId}.png`} className="w-16 h-16 animate-bounce" alt="Rescue" />
-        ))}
-        {collected.length === 0 && <span className="text-slate-400">Answer correctly to see Pokémon appear!</span>}
+      {/* Reward Shell Section */}
+      <div className="w-full max-w-4xl bg-white/70 p-10 rounded-[50px] border-b-[16px] border-blue-400 flex flex-col items-center z-10 shadow-2xl relative sketch-border">
+        <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-blue-500 text-white px-10 py-3 rounded-full font-bold text-2xl shadow-md border-4 border-white">
+          Pokemon Rewards 🐚
+        </div>
+        <div className="flex flex-wrap justify-center gap-8 min-h-[140px] mt-6 w-full">
+          {collected.map((pokeIdx, i) => {
+            const PokeComp = POKEMON_DOODLES[pokeIdx];
+            return (
+              <div key={i} className="bg-white p-4 rounded-full shadow-lg animate-bounce border-4 border-yellow-200">
+                 <PokeComp size={80} />
+              </div>
+            );
+          })}
+          {collected.length === 0 && <span className="text-blue-300 text-2xl font-bold mt-10 italic">Pop bubbles to rescue Pokemon!</span>}
+        </div>
       </div>
     </div>
   );

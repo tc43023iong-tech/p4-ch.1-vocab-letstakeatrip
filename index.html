@@ -1,48 +1,118 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokémon English World</title>
+    <title>Crayon Doodle World</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Patrick+Hand&family=Schoolbell&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --crayon-blue: #a0d8f1;
+            --crayon-red: #ffadad;
+            --crayon-yellow: #fff4ad;
+            --crayon-green: #caffbf;
+            --ink: #555;
+        }
+
         body {
-            font-family: 'Quicksand', sans-serif;
-            background-color: #f0fdf4;
+            font-family: 'Patrick Hand', cursive;
+            background-color: #fdfcf0; /* Warm paper color */
+            background-image: 
+                radial-gradient(#e5e5e5 1px, transparent 0);
+            background-size: 24px 24px;
+            color: var(--ink);
             overflow-x: hidden;
+            margin: 0;
         }
+
+        /* The Magic Sketch Filter */
+        .sketchy {
+            filter: url('#rough-edge');
+        }
+
         h1, h2, h3 {
-            font-family: 'Fredoka One', cursive;
+            font-family: 'Schoolbell', cursive;
         }
-        .pokemon-float {
-            animation: float 3s ease-in-out infinite;
+
+        /* Hand-drawn irregular border */
+        .sketch-border {
+            border: 3px solid var(--ink);
+            border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+            background: white;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.05);
         }
+
+        .sketch-button {
+            border: 3px solid var(--ink);
+            border-radius: 120px 25px 110px 30px/30px 105px 25px 115px;
+            transition: all 0.2s;
+            cursor: pointer;
+            background: white;
+            display: inline-block;
+            filter: url('#rough-edge');
+        }
+
+        .sketch-button:hover {
+            transform: scale(1.03) rotate(1deg);
+            background-color: #fffdf0;
+        }
+
+        .sketch-button:active {
+            transform: scale(0.98);
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-1deg); }
+            50% { transform: rotate(1.5deg); }
+        }
+        .animate-wiggle {
+            animation: wiggle 0.5s ease-in-out infinite;
+        }
+
+        /* Floating decoration */
         @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            0%, 100% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-10px) rotate(3deg); }
         }
-        .bubble-animation {
-            animation: bubbleFloat 6s ease-in-out infinite;
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
         }
-        @keyframes bubbleFloat {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(5px, -15px); }
+
+        .paper-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 100;
         }
     </style>
-<script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@^19.2.4",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "react/": "https://esm.sh/react@^19.2.4/"
-  }
-}
-</script>
 </head>
 <body>
+    <!-- SVG Filters for Hand-Drawn look -->
+    <svg style="position: absolute; width: 0; height: 0;">
+        <filter id="rough-edge">
+            <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" />
+        </filter>
+        <filter id="hand-drawn">
+            <feTurbulence type="pencilSketch" baseFrequency="0.03" numOctaves="2" result="sketch" />
+            <feDisplacementMap in="SourceGraphic" in2="sketch" scale="2" />
+        </filter>
+    </svg>
+
+    <div class="paper-overlay"></div>
     <div id="root"></div>
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@^19.2.4",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+        "react/": "https://esm.sh/react@^19.2.4/"
+      }
+    }
+    </script>
     <script type="module" src="/index.tsx"></script>
 </body>
 </html>
