@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 export interface WordItem {
@@ -17,8 +16,7 @@ export type GameType =
   | 'BUBBLE_POP'
   | 'WORD_SEARCH'
   | 'MEMORY_GAME'
-  | 'FILL_BLANKS'
-  | 'BATTLE';
+  | 'FILL_BLANKS';
 
 export const WORDS: WordItem[] = [
   { id: 1, english: "watch the birds", chinese: "看鳥", emoji: "🔭🐦", sentence: "We can ___ in the park." },
@@ -35,18 +33,15 @@ export const WORDS: WordItem[] = [
   { id: 12, english: "go camping", chinese: "去露營", emoji: "⛺🔥", sentence: "We usually ___ in winter." },
 ];
 
-// Helper to draw Doodle characters using SVG
 const createDoodle = (content: React.ReactNode, color: string, size: number) => 
   React.createElement('svg', { width: size, height: size, viewBox: '0 0 100 100', className: 'sketchy' }, content);
 
-// Fix: Add CHARACTER_IMAGES used in MatchingGame, SpellingBee, and MemoryGame
 export const CHARACTER_IMAGES = {
   NOBITA: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Felix',
   SUNEO: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Aneka',
   MINI_DORA: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Caleb',
 };
 
-// Fix: Add DoodleDora used in FillBlanks and PokemonBattle
 export const DoodleDora = ({ size = 100 }) => createDoodle([
   React.createElement('circle', { cx: '50', cy: '45', r: '25', fill: '#fbbf24', stroke: '#555', strokeWidth: '3' }),
   React.createElement('path', { d: 'M30 45 Q30 20 50 20 Q70 20 70 45', fill: '#78350f', stroke: '#555', strokeWidth: '2' }),
@@ -55,14 +50,6 @@ export const DoodleDora = ({ size = 100 }) => createDoodle([
   React.createElement('path', { d: 'M45 55 Q50 60 55 55', fill: 'none', stroke: '#555', strokeWidth: '2' }),
   React.createElement('rect', { x: '35', y: '70', width: '30', height: '25', rx: '5', fill: '#ef4444', stroke: '#555', strokeWidth: '3' })
 ], '#fbbf24', size);
-
-// Fix: Add DoodleFriend used in PokemonBattle
-export const DoodleFriend = ({ size = 100, color = '#ddd' }) => createDoodle([
-  React.createElement('circle', { cx: '50', cy: '40', r: '20', fill: color, stroke: '#555', strokeWidth: '3' }),
-  React.createElement('rect', { x: '30', y: '60', width: '40', height: '35', rx: '10', fill: '#94a3b8', stroke: '#555', strokeWidth: '3' }),
-  React.createElement('circle', { cx: '45', cy: '35', r: '3', fill: '#333' }),
-  React.createElement('circle', { cx: '55', cy: '35', r: '3', fill: '#333' })
-], color, size);
 
 export const DoodlePikachu = ({ size = 100 }) => createDoodle([
   React.createElement('path', { d: 'M30 40 Q30 10 40 20 L45 35', fill: '#fef08a', stroke: '#555', strokeWidth: '3' }),
@@ -113,6 +100,16 @@ export const DoodleGengar = ({ size = 100 }) => createDoodle([
   React.createElement('path', { d: 'M35 75 Q50 85 65 75', fill: 'none', stroke: '#555', strokeWidth: '3' })
 ], '#ddd6fe', size);
 
+export const DoodleDog = ({ size = 100, color = '#fbbf24' }) => createDoodle([
+  React.createElement('path', { d: 'M25 35 Q15 20 20 50', fill: color, stroke: '#555', strokeWidth: '3' }),
+  React.createElement('path', { d: 'M75 35 Q85 20 80 50', fill: color, stroke: '#555', strokeWidth: '3' }),
+  React.createElement('circle', { cx: '50', cy: '55', r: '30', fill: color, stroke: '#555', strokeWidth: '3' }),
+  React.createElement('circle', { cx: '42', cy: '50', r: '3', fill: '#333' }),
+  React.createElement('circle', { cx: '58', cy: '50', r: '3', fill: '#333' }),
+  React.createElement('circle', { cx: '50', cy: '62', r: '4', fill: '#333' }),
+  React.createElement('path', { d: 'M45 68 Q50 72 55 68', fill: 'none', stroke: '#555', strokeWidth: '2' })
+], color, size);
+
 export const POKEMON_DOODLES = [DoodlePikachu, DoodleBulbasaur, DoodleCharmander, DoodleSquirtle, DoodleJigglypuff, DoodleGengar];
 
 export const GAME_METADATA = [
@@ -122,6 +119,5 @@ export const GAME_METADATA = [
   { type: 'FILL_BLANKS', name: 'Fill Blanks', icon: '✏️', color: '#caffbf', char: DoodleCharmander },
   { type: 'BUBBLE_POP', name: 'Bubble Pop', icon: '🫧', color: '#a0d8f1', char: DoodleJigglypuff },
   { type: 'WORD_SEARCH', name: 'Word Search', icon: '🧩', color: '#ffadad', char: DoodleGengar },
-  { type: 'BATTLE', name: 'Poke Battle', icon: '⚔️', color: '#ffadad', char: DoodlePikachu },
   { type: 'MEMORY_GAME', name: 'Memory Game', icon: '🧠', color: '#caffbf', char: DoodleBulbasaur },
 ];

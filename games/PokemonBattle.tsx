@@ -1,5 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
-import { WORDS, WordItem, DoodleDora, DoodleFriend } from '../types';
+// Fixed: Replaced non-existent DoodleFriend with DoodleDog
+import { WORDS, WordItem, DoodleDora, DoodleDog } from '../types';
 
 const PokemonBattle: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [playerHp, setPlayerHp] = useState(100);
@@ -68,7 +70,8 @@ const PokemonBattle: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         <div className="text-6xl font-bold text-red-400 mb-10 animate-bounce">VS</div>
 
         <div className="flex flex-col items-center">
-           <DoodleFriend color="#555" size={120} />
+           {/* Fixed: Replaced DoodleFriend with DoodleDog */}
+           <DoodleDog color="#555" size={120} />
            <div className="mt-4 w-48 sketch-border h-6 overflow-hidden bg-white">
              <div className="h-full transition-all duration-500" style={{ width: `${enemyHp}%`, backgroundColor: getHpColor(enemyHp) }}></div>
            </div>

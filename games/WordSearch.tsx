@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { WORDS, DoodlePikachu, DoodleGengar } from '../types';
+import { WORDS, DoodleGengar } from '../types';
 
-const GRID_SIZE = 24; // Increased to fit "lookatthebeautifulview" (22 chars)
+const GRID_SIZE = 16; // Smaller grid as requested
 
 interface PlacedWord {
   text: string;
@@ -12,20 +12,23 @@ interface PlacedWord {
 const WordSearch: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [grid, setGrid] = useState<string[][]>([]);
   const [foundWords, setFoundWords] = useState<string[]>([]);
+  const [targetWords, setTargetWords] = useState<typeof WORDS>([]);
   const [placedWords, setPlacedWords] = useState<PlacedWord[]>([]);
   const [startCell, setStartCell] = useState<{r: number, c: number} | null>(null);
 
   useEffect(() => {
-    generateGrid();
+    // Select 3 random words for this session
+    const subset = [...WORDS].sort(() => 0.5 - Math.random()).slice(0, 3);
+    setTargetWords(subset);
+    generateGrid(subset);
   }, []);
 
-  const generateGrid = () => {
+  const generateGrid = (wordsToPlace: typeof WORDS) => {
     const newGrid = Array(GRID_SIZE).fill(null).map(() => Array(GRID_SIZE).fill(''));
     const alphabet = 'abcdefghijklmnopqrstuvwxyz';
     const placed: PlacedWord[] = [];
 
-    // Sort words by length descending to place longest words first
-    const sortedWords = [...WORDS].sort((a, b) => b.english.length - a.english.length);
+    const sortedWords = [...wordsToPlace].sort((a, b) => b.english.length - a.english.length);
 
     sortedWords.forEach(w => {
       const wordText = w.english.toLowerCase().replace(/\s/g, '');
@@ -34,8 +37,6 @@ const WordSearch: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       
       while (!isPlaced && attempts < 100) {
         const horizontal = Math.random() > 0.5;
-        
-        // Safety: Ensure range is at least 1
         const maxR = horizontal ? GRID_SIZE : Math.max(1, GRID_SIZE - wordText.length);
         const maxC = horizontal ? Math.max(1, GRID_SIZE - wordText.length) : GRID_SIZE;
         
@@ -48,7 +49,6 @@ const WordSearch: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           const targetR = r + (horizontal ? 0 : i);
           const targetC = c + (horizontal ? i : 0);
           
-          // Double check bounds
           if (targetR >= GRID_SIZE || targetC >= GRID_SIZE || targetR < 0 || targetC < 0) {
             overlap = true;
             break;
@@ -63,9 +63,7 @@ const WordSearch: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         
         if (!overlap) {
           cells.forEach((cell, i) => {
-            if (newGrid[cell.r]) {
-              newGrid[cell.r][cell.c] = wordText[i];
-            }
+            newGrid[cell.r][cell.c] = wordText[i];
           });
           placed.push({ text: wordText, original: w.english, cells });
           isPlaced = true;
@@ -74,7 +72,6 @@ const WordSearch: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       }
     });
 
-    // Fill remaining cells
     for (let r = 0; r < GRID_SIZE; r++) {
       for (let c = 0; c < GRID_SIZE; c++) {
         if (newGrid[r][c] === '') newGrid[r][c] = alphabet[Math.floor(Math.random() * alphabet.length)];
@@ -106,7 +103,7 @@ const WordSearch: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       for (let i = 0; i < len; i++) {
         const currR = start.r + i * stepR;
         const currC = start.c + i * stepC;
-        if (grid[currR] && grid[currR][currC] !== undefined) {
+        if (grid[currR]?.[currC] !== undefined) {
           selectedText += grid[currR][currC];
         }
       }
@@ -130,19 +127,19 @@ const WordSearch: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     <div className="w-full flex flex-col items-center">
       <button onClick={onBack} className="absolute left-6 top-6 sketch-button px-6 py-2 font-bold z-20">⬅️ Back</button>
       
-      <div className="flex items-center gap-6 mt-12 mb-10">
-        <DoodleGengar size={120} />
-        <h2 className="text-5xl text-blue-500 font-bold">Word Search 🔍</h2>
+      <div className="flex items-center gap-6 mt-12 mb-8">
+        <DoodleGengar size={100} />
+        <h2 className="text-4xl text-blue-500 font-bold">Word Search 🔍</h2>
       </div>
 
-      <div className="flex flex-col xl:flex-row gap-12 w-full justify-center px-4 overflow-x-auto">
-        <div className="sketch-border p-4 bg-white overflow-auto">
-          <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${GRID_SIZE}, minmax(0, 1fr))` }}>
+      <div className="flex flex-col md:flex-row gap-8 w-full justify-center px-4 max-w-5xl">
+        <div className="sketch-border p-3 bg-white shadow-xl">
+          <div className="grid gap-0.5" style={{ gridTemplateColumns: `repeat(${GRID_SIZE}, minmax(0, 1fr))` }}>
             {grid.map((row, r) => row.map((char, c) => (
               <button
                 key={`${r}-${c}`}
                 onClick={() => handleCellClick(r, c)}
-                className={`w-7 h-7 sm:w-8 sm:h-8 text-lg font-bold flex items-center justify-center transition-all ${
+                className={`w-7 h-7 sm:w-8 sm:h-8 text-base font-bold flex items-center justify-center transition-all ${
                   startCell?.r === r && startCell?.c === c ? 'bg-yellow-200' :
                   isCellFound(r, c) ? 'bg-green-100 text-green-600' : 'hover:bg-slate-50'
                 }`}
@@ -153,19 +150,24 @@ const WordSearch: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           </div>
         </div>
 
-        <div className="sketch-border p-8 bg-white w-full xl:w-96 h-fit">
-          <h3 className="text-3xl font-bold text-slate-500 mb-6 border-b-2 border-dashed border-slate-200 pb-2">Target Words</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-2">
-            {WORDS.map(w => (
+        <div className="sketch-border p-6 bg-white w-full md:w-72 h-fit">
+          <h3 className="text-2xl font-bold text-slate-500 mb-4 border-b-2 border-dashed border-slate-200 pb-2">Words to Find (3)</h3>
+          <div className="flex flex-col gap-3">
+            {targetWords.map(w => (
               <button
                 key={w.id}
                 onClick={() => autoFind(w.english)}
-                className={`text-lg text-left p-2 rounded-lg transition-all ${foundWords.includes(w.english) ? 'text-green-500 font-bold line-through' : 'text-slate-600 hover:bg-slate-50'}`}
+                className={`text-xl text-left p-3 rounded-xl transition-all border-2 border-transparent ${foundWords.includes(w.english) ? 'text-green-500 font-bold line-through bg-green-50' : 'text-slate-600 hover:bg-slate-50 hover:border-blue-100'}`}
               >
                 ✏️ {w.english.toLowerCase()}
               </button>
             ))}
           </div>
+          {foundWords.length === 3 && (
+            <button onClick={() => window.location.reload()} className="mt-8 w-full sketch-button py-3 font-bold text-blue-500">
+               Play Again! 🔄
+            </button>
+          )}
         </div>
       </div>
     </div>
